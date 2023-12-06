@@ -691,17 +691,41 @@ var MyApp = (function () {
     );
     return screenStream;
   }
-  async function captureAudio(
-    mediaContraints = {
-      video: false,
-      audio: true,
-    }
-  ) {
-    const audioStream = await navigator.mediaDevices.getUserMedia(
-      mediaContraints
-    );
-    return audioStream;
+async function captureAudio(
+  mediaContraints = {
+    audio: {
+      sampleRate: 48000, // Higher sample rate for better audio quality
+      channelCount: 2, // Stereo audio
+      echoCancellation: true, // Depends on your need
+      noiseSuppression: true, // Depends on your need
+      autoGainControl: true, // Depends on your need
+    },
+    video: false,
   }
+) {
+  const audioStream = await navigator.mediaDevices.getUserMedia(
+    mediaContraints
+  );
+  return audioStream;
+}
+
+
+  // async function captureAudio(
+  //   mediaContraints = {
+  //     video: false,
+  //     audio: true,
+  //   }
+  // ) {
+  //   const audioStream = await navigator.mediaDevices.getUserMedia(
+  //     mediaContraints
+  //   );
+    
+  //   console.log('-------- audio stream in line 704 ---------');
+    
+  //   console.log(audioStream);
+    
+  //   return audioStream;
+  // }
   async function startRecording() {
     const screenStream = await captureScreen();
     const audioStream = await captureAudio();
@@ -709,7 +733,16 @@ var MyApp = (function () {
       ...screenStream.getTracks(),
       ...audioStream.getTracks(),
     ]);
-    mediaRecorder = new MediaRecorder(stream);
+    console.log('------- test changing the quality of the recording ----------');
+    console.log(stream);
+    
+    
+    // mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: "video/webm;codecs=vp9,opus", // Specifying codecs
+      audioBitsPerSecond: 128000, // Higher bitrate for better audio quality
+    });
+
     mediaRecorder.start();
     mediaRecorder.onstop = function (e) {
       var clipName = prompt("Enter a name for your recording");
