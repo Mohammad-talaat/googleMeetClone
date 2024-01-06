@@ -69,7 +69,11 @@ var AppProcess = (function () {
     try {
       var astream = await navigator.mediaDevices.getUserMedia({
         video: false,
-        audio: true,
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          sampleRate: 96000
+        },
       });
       audio = astream.getAudioTracks()[0];
       audio.enabled = false;
@@ -696,8 +700,8 @@ async function captureAudio(
     audio: {
       sampleRate: 48000, // Higher sample rate for better audio quality
       channelCount: 2, // Stereo audio
-      echoCancellation: true, // Depends on your need
-      noiseSuppression: true, // Depends on your need
+      echoCancellation: false, // Depends on your need
+      noiseSuppression: false, // Depends on your need
       autoGainControl: true, // Depends on your need
     },
     video: false,
@@ -713,7 +717,11 @@ async function captureAudio(
   // async function captureAudio(
   //   mediaContraints = {
   //     video: false,
-  //     audio: true,
+  //      audio: {
+        //   echoCancellation: false,
+        //   noiseSuppression: false,
+        //   sampleRate: 96000
+        // },
   //   }
   // ) {
   //   const audioStream = await navigator.mediaDevices.getUserMedia(
